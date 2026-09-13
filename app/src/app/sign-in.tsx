@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon, type IconName } from '@/components/icon';
+import { SocialSignIn } from '@/components/social-sign-in';
 import { Banner, Button, Card, Input, T } from '@/components/ui';
 import { Brand, Colors, Spacing } from '@/constants/theme';
 import { api, asApiError } from '@/lib/api';
@@ -90,6 +91,7 @@ export default function SignInScreen() {
                 {step === 'email' ? (
                   <>
                     <T variant="h2">Sign in or create an account</T>
+                    <SocialSignIn onSignedIn={signIn} onError={setError} />
                     <T variant="small" color={Colors.textSecondary}>
                       We&apos;ll email you a 6-digit code — no password needed.
                     </T>

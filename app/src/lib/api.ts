@@ -77,6 +77,10 @@ export const api = {
   verifyCode: (email: string, code: string, name: string) =>
     request<{ token: string; user: User }>('/auth/verify', { body: { email, code, name } }),
 
+  googleSignIn: (idToken: string) => request<{ token: string; user: User }>('/auth/google', { body: { idToken } }),
+  appleSignIn: (identityToken: string, fullName: string) =>
+    request<{ token: string; user: User }>('/auth/apple', { body: { identityToken, fullName } }),
+
   me: () => request<Me>('/me'),
   updateName: (name: string) => request<{ user: User }>('/me', { method: 'PATCH', body: { name } }),
   devSetPlan: (plan: PlanId) => request<{ plan: PlanId; limits: PlanLimits }>('/billing/dev-upgrade', { body: { plan } }),

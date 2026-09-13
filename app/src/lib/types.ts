@@ -18,7 +18,8 @@ export type SectionKind =
 
 export interface User {
   id: string;
-  email: string;
+  /** null when the user signed in with Apple/Google and no verified email was shared. */
+  email: string | null;
   name: string;
   plan: PlanId;
 }

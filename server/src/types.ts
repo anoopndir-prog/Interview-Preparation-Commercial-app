@@ -18,7 +18,7 @@ export type SectionKind = (typeof SECTION_KINDS)[number];
 
 export interface User {
   id: string;
-  email: string;
+  email: string | null;
   name: string;
   plan: PlanId;
   created_at: string;

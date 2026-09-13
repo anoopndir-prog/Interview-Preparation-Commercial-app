@@ -5,7 +5,17 @@ import multer from 'multer';
 
 import { applyScore, voiceMetrics, type SectionProgress } from './adaptive.js';
 import { buildPrepPlan, evaluateAnswer, writeQuestion, type PrepPlan } from './ai.js';
-import { findOrCreateUser, normalizeEmail, requireAuth, sendLoginCode, signToken, verifyLoginCode } from './auth.js';
+import {
+  findOrCreateSocialUser,
+  findOrCreateUser,
+  normalizeEmail,
+  requireAuth,
+  sendLoginCode,
+  signToken,
+  verifyAppleToken,
+  verifyGoogleToken,
+  verifyLoginCode,
+} from './auth.js';
 import { config } from './config.js';
 import { all, one, run, transaction } from './db.js';
 import { fileToContent, textBlock } from './documents.js';
@@ -47,6 +57,18 @@ api.post('/auth/verify', (req, res) => {
     throw new HttpError(401, 'That code is incorrect or has expired', 'bad_code');
   }
   const user = findOrCreateUser(email, String(req.body?.name ?? '').trim().slice(0, 80));
+  res.json({ token: signToken(user.id), user: publicUser(user) });
+});
+
+api.post('/auth/google', async (req, res) => {
+  const profile = await verifyGoogleToken(String(req.body?.idToken ?? ''));
+  const user = findOrCreateSocialUser(profile);
+  res.json({ token: signToken(user.id), user: publicUser(user) });
+});
+
+api.post('/auth/apple', async (req, res) => {
+  const profile = await verifyAppleToken(String(req.body?.identityToken ?? ''), String(req.body?.fullName ?? ''));
+  const user = findOrCreateSocialUser(profile);
   res.json({ token: signToken(user.id), user: publicUser(user) });
 });
 

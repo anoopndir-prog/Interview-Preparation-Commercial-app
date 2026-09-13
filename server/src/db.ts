@@ -14,10 +14,19 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
-  email TEXT NOT NULL UNIQUE,
+  email TEXT UNIQUE,               -- NULL when a social provider shares no verified email
   name TEXT NOT NULL DEFAULT '',
   plan TEXT NOT NULL DEFAULT 'free',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Google / Apple accounts linked to a user. One user can have email, Google and Apple sign-in.
+CREATE TABLE IF NOT EXISTS auth_identities (
+  provider TEXT NOT NULL,          -- 'google' | 'apple'
+  subject TEXT NOT NULL,           -- the provider's stable user id ("sub")
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (provider, subject)
 );
 
 -- A prep kit = one resume/JD combination and the plan Claude built from it.

@@ -17,10 +17,12 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jose": "^6.2.12",
     "jsonwebtoken": "^9.0.3",
     "mammoth": "^1.12.3",
     "multer": "^2.3.0",
     "node-cron": "^4.6.0",
+    "unpdf": "^1.8.1",
     "zod": "^4.6.2"
   },
   "devDependencies": {

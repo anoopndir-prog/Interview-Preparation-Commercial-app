@@ -4,9 +4,12 @@ import { z } from 'zod';
 
 import { config } from './config.js';
 import { HttpError } from './errors.js';
+import { generateJson, researchText, type JsonSchema } from './providers.js';
 import { SECTION_KINDS, type Difficulty } from './types.js';
 
-const client = new Anthropic();
+// Created on first use, so a Gemini or Groq setup runs without an Anthropic key.
+let anthropic: Anthropic | undefined;
+const claude = () => (anthropic ??= new Anthropic());
 
 // Server-side refusal fallback: if Opus 5 declines, the API re-runs the request on
 // Anthropic's recommended fallback model inside the same call.
@@ -20,7 +23,16 @@ async function generate<S extends z.ZodType>(opts: {
   schema: S;
   effort: Effort;
 }): Promise<z.infer<S>> {
-  const res = await client.beta.messages.parse({
+  if (config.aiProvider !== 'anthropic') {
+    const raw = await generateJson({ ...opts, schema: z.toJSONSchema(opts.schema) as JsonSchema });
+    const parsed = opts.schema.safeParse(raw);
+    if (!parsed.success) {
+      throw new HttpError(502, 'The AI response was incomplete — please try again.', 'ai_incomplete');
+    }
+    return parsed.data as z.infer<S>;
+  }
+
+  const res = await claude().beta.messages.parse({
     model: config.model,
     max_tokens: 16000,
     betas: [FALLBACK_BETA],
@@ -216,33 +228,11 @@ export const NewsSchema = z.object({
 export type NewsItem = z.infer<typeof NewsSchema>['items'][number];
 
 export async function researchNews(domain: string, date: string): Promise<NewsItem[]> {
-  const messages: Anthropic.Beta.BetaMessageParam[] = [
-    {
-      role: 'user',
-      content: `Today is ${date}. Find the 5–7 most important news stories from the last 48 hours for people interviewing for jobs in: ${domain}.
+  const prompt = `Today is ${date}. Find the 5–7 most important news stories from the last 48 hours for people interviewing for jobs in: ${domain}.
 Prefer industry developments, major company moves, hiring and layoff trends, new technology, and regulation. Skip celebrity, politics unrelated to the industry, and duplicate stories.
-For each story give: headline, a two-sentence summary, why it could come up in an interview (or how a candidate could mention it), the publisher's name and the article URL.`,
-    },
-  ];
+For each story give: headline, a two-sentence summary, why it could come up in an interview (or how a candidate could mention it), the publisher's name and the article URL.`;
 
-  // Web search runs a server-side loop that may pause; resume by re-sending the paused turn.
-  let text = '';
-  for (let i = 0; i < 4; i++) {
-    const res = await client.beta.messages.create({
-      model: config.model,
-      max_tokens: 16000,
-      betas: [FALLBACK_BETA],
-      fallbacks: 'default',
-      thinking: { type: 'adaptive' },
-      output_config: { effort: config.effort.news },
-      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 6 }],
-      messages,
-    });
-    if (res.stop_reason === 'refusal') return [];
-    text += res.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
-    if (res.stop_reason !== 'pause_turn') break;
-    messages.push({ role: 'assistant', content: res.content });
-  }
+  const text = config.aiProvider === 'anthropic' ? await researchWithClaude(prompt) : await researchText(prompt);
   if (!text.trim()) return [];
 
   const structured = await generate({
@@ -253,4 +243,28 @@ For each story give: headline, a two-sentence summary, why it could come up in a
     effort: 'low',
   });
   return structured.items.filter((item) => /^https?:\/\//.test(item.url));
+}
+
+async function researchWithClaude(prompt: string) {
+  const messages: Anthropic.Beta.BetaMessageParam[] = [{ role: 'user', content: prompt }];
+
+  // Web search runs a server-side loop that may pause; resume by re-sending the paused turn.
+  let text = '';
+  for (let i = 0; i < 4; i++) {
+    const res = await claude().beta.messages.create({
+      model: config.model,
+      max_tokens: 16000,
+      betas: [FALLBACK_BETA],
+      fallbacks: 'default',
+      thinking: { type: 'adaptive' },
+      output_config: { effort: config.effort.news },
+      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 6 }],
+      messages,
+    });
+    if (res.stop_reason === 'refusal') return '';
+    text += res.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
+    if (res.stop_reason !== 'pause_turn') break;
+    messages.push({ role: 'assistant', content: res.content });
+  }
+  return text;
 }

@@ -9,6 +9,7 @@ import multer from 'multer';
 import { config } from './config.js';
 import { HttpError } from './errors.js';
 import { scheduleDailyNews } from './news.js';
+import { ProviderError } from './providers.js';
 import { api } from './routes.js';
 
 const app = express();
@@ -46,6 +47,12 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   } else if (err instanceof Anthropic.APIError) {
     console.error('[claude]', err.status, err.message);
     res.status(502).json({ error: 'The AI service returned an error. Please try again.', code: 'ai_error' });
+  } else if (err instanceof ProviderError && (err.status === 429 || err.status >= 500)) {
+    console.error(`[${config.aiProvider}]`, err.status, err.message);
+    res.status(503).json({ error: 'Our AI coach is busy right now — please try again in a moment.', code: 'ai_busy' });
+  } else if (err instanceof ProviderError) {
+    console.error(`[${config.aiProvider}]`, err.status, err.message);
+    res.status(502).json({ error: 'The AI service returned an error. Please try again.', code: 'ai_error' });
   } else if (typeof err?.status === 'number' && err.status < 500) {
     res.status(err.status).json({ error: err.message ?? 'Bad request', code: 'bad_request' });
   } else {
@@ -57,6 +64,8 @@ app.use(errorHandler);
 
 app.listen(config.port, () => {
   console.log(`Go Interview API listening on http://localhost:${config.port}`);
+  const key = { gemini: config.geminiApiKey, groq: config.groqApiKey, anthropic: process.env.ANTHROPIC_API_KEY?.trim() }[config.aiProvider];
+  console.log(`[ai] ${config.aiProvider} · ${config.model}${key ? '' : ' — WARNING: no API key set, AI features will fail'}`);
   if (config.devAuth) console.log('[dev-auth] sign-in codes are printed here; dev billing toggle enabled');
 });
 

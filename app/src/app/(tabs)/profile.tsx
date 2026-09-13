@@ -68,7 +68,7 @@ export default function ProfileScreen() {
     }
   };
 
-  const initials = (me.user.name || me.user.email).slice(0, 1).toUpperCase();
+  const initials = (me.user.name || me.user.email || '?').slice(0, 1).toUpperCase();
 
   return (
     <Screen tabbed>
@@ -83,7 +83,7 @@ export default function ProfileScreen() {
           <View style={{ flex: 1, gap: 4 }}>
             <T variant="h3">{me.user.name || 'Add your name'}</T>
             <T variant="small" color={Colors.textSecondary}>
-              {me.user.email}
+              {me.user.email ?? 'Signed in with Apple or Google'}
             </T>
           </View>
           <Chip label={isPro ? 'Pro' : 'Free'} filled={isPro} color={isPro ? Brand.sun : Brand.blue} icon={isPro ? 'sparkles' : undefined} />
@@ -155,7 +155,7 @@ export default function ProfileScreen() {
       {message && <Banner tone={message.tone} message={message.text} />}
       <Button title="Sign out" variant="secondary" color={Colors.danger} onPress={signOut} />
       <T variant="small" color={Colors.textMuted} style={{ textAlign: 'center' }}>
-        Go Interview · AI coaching powered by Claude
+        Go Interview · AI-powered interview coaching
       </T>
     </Screen>
   );
