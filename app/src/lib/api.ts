@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-import type { AnswerResult, Difficulty, Me, News, PlanId, PlanLimits, Prep, Question, Scores, Section, User } from './types';
+import type { AnswerResult, Difficulty, Me, PlanId, PlanLimits, Prep, Question, Scores, Section, User } from './types';
 
 /**
  * On web the site is served by the API host itself, so relative URLs work.
@@ -96,5 +96,4 @@ export const api = {
     request<AnswerResult>(`/questions/${questionId}/answer`, { body }),
 
   scores: () => request<Scores>('/scores'),
-  news: (domain?: string) => request<News>(`/news${domain ? `?domain=${encodeURIComponent(domain)}` : ''}`),
 };

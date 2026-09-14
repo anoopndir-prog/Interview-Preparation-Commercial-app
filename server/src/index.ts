@@ -8,7 +8,6 @@ import multer from 'multer';
 
 import { config } from './config.js';
 import { HttpError } from './errors.js';
-import { scheduleDailyNews } from './news.js';
 import { ProviderError } from './providers.js';
 import { api } from './routes.js';
 
@@ -68,5 +67,3 @@ app.listen(config.port, () => {
   console.log(`[ai] ${config.aiProvider} · ${config.model}${key ? '' : ' — WARNING: no API key set, AI features will fail'}`);
   if (config.devAuth) console.log('[dev-auth] sign-in codes are printed here; dev billing toggle enabled');
 });
-
-scheduleDailyNews();

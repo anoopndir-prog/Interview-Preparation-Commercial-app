@@ -14,7 +14,6 @@ const FEATURES: { label: string; value: (p: PlanLimits) => string }[] = [
   { label: 'Graded answers / day', value: (p) => String(p.dailyAnswers) },
   { label: 'Follow-up depth', value: (p) => `${p.maxFollowUpDepth} deep` },
   { label: 'Model answers', value: (p) => (p.modelAnswers ? '✓' : '—') },
-  { label: 'News domains', value: (p) => String(p.newsDomains) },
 ];
 
 export default function ProfileScreen() {

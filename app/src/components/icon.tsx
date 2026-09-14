@@ -13,7 +13,6 @@ const ICONS = {
   stop: { ios: 'stop.fill', android: 'stop', web: 'stop' },
   flame: { ios: 'flame.fill', android: 'local_fire_department', web: 'local_fire_department' },
   chart: { ios: 'chart.bar.fill', android: 'bar_chart', web: 'bar_chart' },
-  news: { ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' },
   person: { ios: 'person.crop.circle.fill', android: 'account_circle', web: 'account_circle' },
   close: { ios: 'xmark', android: 'close', web: 'close' },
   check: { ios: 'checkmark.circle.fill', android: 'check_circle', web: 'check_circle' },

@@ -97,14 +97,6 @@ CREATE TABLE IF NOT EXISTS activity (
   answers INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (user_id, day)
 );
-
-CREATE TABLE IF NOT EXISTS news (
-  domain TEXT NOT NULL,
-  edition TEXT NOT NULL,
-  items_json TEXT NOT NULL,
-  generated_at TEXT NOT NULL DEFAULT (datetime('now')),
-  PRIMARY KEY (domain, edition)
-);
 `);
 
 export function one<T>(sql: string, ...params: SQLInputValue[]): T | undefined {

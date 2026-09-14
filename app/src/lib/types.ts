@@ -30,7 +30,6 @@ export interface PlanLimits {
   dailyAnswers: number;
   maxFollowUpDepth: number;
   modelAnswers: boolean;
-  newsDomains: number;
 }
 
 export interface Streak {
@@ -120,23 +119,4 @@ export interface Scores {
   categories: { kind: SectionKind; attempts: number; avgScore: number | null }[];
   sections: SectionScore[];
   streak: Streak;
-}
-
-export interface NewsItem {
-  headline: string;
-  summary: string;
-  interview_angle: string;
-  source: string;
-  url: string;
-}
-
-export interface News {
-  domains: string[];
-  lockedDomains: number;
-  refreshHour: number;
-  timezone: string;
-  domain: string | null;
-  edition: string | null;
-  items: NewsItem[];
-  generatedAt: string | null;
 }

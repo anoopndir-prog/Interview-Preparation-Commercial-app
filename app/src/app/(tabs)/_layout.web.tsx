@@ -17,9 +17,6 @@ export default function WebTabLayout() {
           <TabTrigger name="scores" href="/scores" asChild>
             <NavButton icon="chart">Scores</NavButton>
           </TabTrigger>
-          <TabTrigger name="news" href="/news" asChild>
-            <NavButton icon="news">News</NavButton>
-          </TabTrigger>
           <TabTrigger name="profile" href="/profile" asChild>
             <NavButton icon="person">Profile</NavButton>
           </TabTrigger>

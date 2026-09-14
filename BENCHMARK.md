@@ -16,8 +16,7 @@ How Go Interview compares with the interview-prep apps our audience (college stu
 
 1. **One upload, a whole interview loop.** From a resume, a JD or both, it builds 3–7 sections (technical, behavioral, HR, system design, case study, domain…) that match the real process for that role.
 2. **Adaptive coaching, not just grading.** Two strong answers promote you a phase. Two weak ones switch on *training mode*: easier, teaching-oriented questions aimed at the exact weak areas. Three weak ones step you down a phase.
-3. **Daily domain news with an interview angle.** Every morning at 6:00 AM there's a fresh briefing for your industry, and each story says how to use it in an interview. None of the apps above does this.
-4. **Mobile and web from one codebase**, at a price students can afford (a generous free tier).
+3. **Mobile and web from one codebase**, at a price students can afford (a generous free tier).
 
 ## Free vs Pro (initial proposal — tune after launch data)
 
@@ -27,6 +26,5 @@ How Go Interview compares with the interview-prep apps our audience (college stu
 | Graded answers per day | 15 | 300 (fair use) |
 | Follow-up depth | 1 | 3 |
 | Model answers | — | ✓ |
-| News domains | 1 | 5 |
 
 The limits live in `server/src/plans.ts`.

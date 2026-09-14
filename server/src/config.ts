@@ -34,7 +34,6 @@ export const config = {
   port: Number(env('PORT', '8080')),
   jwtSecret: env('JWT_SECRET', 'dev-only-secret-change-me'),
   dbPath: env('DB_PATH', './data/go-interview.db'),
-  newsTimezone: env('NEWS_TIMEZONE', 'Asia/Kolkata'),
   webDistDir: env('WEB_DIST_DIR', '../app/dist'),
   corsOrigins: list(process.env.CORS_ORIGINS),
   devAuth: process.env.DEV_AUTH === 'true' && !isProduction,
@@ -50,14 +49,12 @@ export const config = {
   model: env('AI_MODEL', DEFAULT_MODELS[aiProvider]),
   geminiApiKey: env('GEMINI_API_KEY', ''),
   groqApiKey: env('GROQ_API_KEY', ''),
-  // Groq helpers: a vision model that reads photographed documents, and the web-search system for news.
+  // Groq's text models don't read images; this vision model transcribes photographed documents.
   groqVisionModel: env('GROQ_VISION_MODEL', 'qwen/qwen3.8-27b'),
-  groqSearchModel: env('GROQ_SEARCH_MODEL', 'groq/compound'),
   // Question writing is quick; grading and planning benefit from more thought.
   effort: {
     plan: 'high',
     question: 'low',
     evaluate: 'medium',
-    news: 'medium',
   } as const,
 };

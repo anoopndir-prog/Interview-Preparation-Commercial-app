@@ -20,7 +20,6 @@ import { config } from './config.js';
 import { all, one, run, transaction } from './db.js';
 import { fileToContent, textBlock } from './documents.js';
 import { badRequest, HttpError, limitReached, notFound } from './errors.js';
-import { getNews } from './news.js';
 import { PLANS, planFor } from './plans.js';
 import { answersToday, recordAnswer, safeTimezone, streakFor } from './streak.js';
 import { DIFFICULTIES, type Difficulty, type PlanId, type User } from './types.js';
@@ -528,27 +527,4 @@ api.get('/scores', (req, res) => {
     sections: sectionScores,
     streak: streakFor(userId, req.tz),
   });
-});
-
-// ---------------------------------------------------------------------------
-// Daily news
-// ---------------------------------------------------------------------------
-
-api.get('/news', async (req, res) => {
-  const limits = planFor(req.user!.plan);
-  const allDomains = [
-    ...new Set(
-      all<{ domain: string }>('SELECT domain FROM preps WHERE user_id = ? ORDER BY created_at DESC', req.user!.id).map(
-        (r) => r.domain,
-      ),
-    ),
-  ];
-  const domains = allDomains.slice(0, limits.newsDomains);
-  const base = { domains, lockedDomains: allDomains.length - domains.length, refreshHour: 6, timezone: config.newsTimezone };
-  if (!domains.length) {
-    res.json({ ...base, domain: null, edition: null, items: [], generatedAt: null });
-    return;
-  }
-  const domain = domains.includes(String(req.query.domain)) ? String(req.query.domain) : domains[0];
-  res.json({ ...base, domain, ...(await getNews(domain)) });
 });

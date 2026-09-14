@@ -21,7 +21,6 @@
     "jsonwebtoken": "^9.0.3",
     "mammoth": "^1.12.3",
     "multer": "^2.3.0",
-    "node-cron": "^4.6.0",
     "unpdf": "^1.8.1",
     "zod": "^4.6.2"
   },
@@ -31,7 +30,6 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.2.0",
     "@types/node": "^22.20.2",
-    "@types/node-cron": "^3.0.11",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   },

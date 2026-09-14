@@ -99,25 +99,6 @@ export async function generateJson(opts: {
   return conform(schema, parseJson(choice?.message?.content ?? ''));
 }
 
-/** A web-searched briefing as plain text, with the source URLs appended. */
-export async function researchText(prompt: string): Promise<string> {
-  if (config.aiProvider === 'gemini') {
-    const data = await gemini({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      tools: [{ googleSearch: {} }],
-    });
-    const chunks: { web?: { uri?: string; title?: string } }[] =
-      data.candidates?.[0]?.groundingMetadata?.groundingChunks ?? [];
-    const sources = chunks.flatMap((c) => (c.web?.uri ? [{ title: c.web.title, url: c.web.uri }] : []));
-    return withSources(geminiText(data), sources);
-  }
-
-  // Groq's compound system runs web searches on Groq's side and reports them in executed_tools.
-  const data = await groq({ model: config.groqSearchModel, messages: [{ role: 'user', content: prompt }] });
-  const message = data.choices?.[0]?.message ?? {};
-  return withSources(message.content ?? '', collectSources(message.executed_tools));
-}
-
 // ---------------------------------------------------------------------------
 // Gemini
 // ---------------------------------------------------------------------------
@@ -227,25 +208,6 @@ async function transcribeImage(mediaType: string, data: string) {
 // ---------------------------------------------------------------------------
 // Shared helpers
 // ---------------------------------------------------------------------------
-
-function collectSources(node: unknown, out: { title?: string; url: string }[] = []) {
-  if (Array.isArray(node)) node.forEach((n) => collectSources(n, out));
-  else if (node && typeof node === 'object') {
-    const o = node as Record<string, unknown>;
-    if (typeof o.url === 'string' && /^https?:\/\//.test(o.url)) {
-      out.push({ title: typeof o.title === 'string' ? o.title : undefined, url: o.url });
-    }
-    Object.values(o).forEach((v) => collectSources(v, out));
-  }
-  return out;
-}
-
-function withSources(text: string, sources: { title?: string; url: string }[]) {
-  if (!text.trim()) return '';
-  const unique = [...new Map(sources.map((s) => [s.url, s])).values()].slice(0, 30);
-  if (!unique.length) return text;
-  return `${text}\n\nSources found by the search:\n${unique.map((s) => `- ${s.title ?? s.url}: ${s.url}`).join('\n')}`;
-}
 
 // Drops keywords some providers reject: `$schema`, and the ±2^53 integer bounds Zod adds.
 function cleanSchema(schema: JsonSchema): JsonSchema {

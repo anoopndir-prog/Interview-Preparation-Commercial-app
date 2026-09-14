@@ -1,6 +1,6 @@
 # Go Interview
 
-An AI interview coach for college students and working professionals. Attach a resume, a job description, or both — as PDF, Word, a photo or text — and Go Interview builds a tailored interview loop. You answer out loud, get scored with coaching and follow-up questions, and level up from Easy to Hard. It also gives you a daily industry news briefing every morning at 6:00 AM.
+An AI interview coach for college students and working professionals. Attach a resume, a job description, or both — as PDF, Word, a photo or text — and Go Interview builds a tailored interview loop. You answer out loud, get scored with coaching and follow-up questions, and level up from Easy to Hard.
 
 - **iOS and Android**: Expo / React Native app
 - **Web**: the same app, served from the API host
@@ -23,7 +23,6 @@ See [BENCHMARK.md](BENCHMARK.md) for how it compares with Interview Warmup, Yood
 | Adaptive training when scores stay low | `server/src/adaptive.ts` |
 | Scores screen: readiness %, per-category and per-section scores, per-phase breakdown, trend | `app/src/app/(tabs)/scores.tsx` |
 | Streaks, daily goal, week strip | `server/src/streak.ts` |
-| Daily domain news, rebuilt at 6:00 AM (web search) | `server/src/news.ts` |
 
 ## Run it locally
 
@@ -54,7 +53,6 @@ Set **one** key in `server/.env`. If `AI_PROVIDER` is blank, the server uses the
 | Key | `GEMINI_API_KEY` ([aistudio.google.com/apikey](https://aistudio.google.com/apikey)) | `GROQ_API_KEY` ([console.groq.com/keys](https://console.groq.com/keys)) | `ANTHROPIC_API_KEY` ([console.anthropic.com](https://console.anthropic.com)) |
 | Default model (`AI_MODEL` overrides) | `gemini-3.8-flash` | `openai/gpt-oss-120b` | `claude-opus-5` |
 | Resume/JD as PDF or photo | Read natively | PDF text is extracted on the server; photos are transcribed by `GROQ_VISION_MODEL` (`qwen/qwen3.8-27b`). Scanned PDFs need a photo, a DOCX or pasted text | Read natively |
-| Daily news search | Google Search grounding | `GROQ_SEARCH_MODEL` (`groq/compound`) | Web search tool |
 | Cost | Free tier, then pay-as-you-go | Free tier, then pay-as-you-go | Pay-as-you-go |
 
 Prompts, scoring rules and the adaptive engine are the same for every provider; only `server/src/providers.ts` (Gemini, Groq) and `server/src/ai.ts` (Claude) differ. On free tiers, check each provider's terms on whether your users' data may be used for training before sending real resumes.
@@ -112,7 +110,7 @@ The container serves the web app at `/` and the API at `/api`. Any Docker host w
 ## Project layout
 
 ```
-server/   Express API, SQLite (node:sqlite), Claude calls, 6 AM news cron
+server/   Express API, SQLite (node:sqlite), AI calls (Gemini, Groq or Claude)
 app/      Expo Router app (iOS, Android, web)
 Dockerfile
 ```

@@ -10,8 +10,6 @@ export interface PlanLimits {
   maxFollowUpDepth: number;
   /** Whether the ideal "model answer" is shown after grading. */
   modelAnswers: boolean;
-  /** How many domains the daily news feed can follow. */
-  newsDomains: number;
 }
 
 export const PLANS: Record<PlanId, PlanLimits> = {
@@ -21,7 +19,6 @@ export const PLANS: Record<PlanId, PlanLimits> = {
     dailyAnswers: 15,
     maxFollowUpDepth: 1,
     modelAnswers: false,
-    newsDomains: 1,
   },
   pro: {
     label: 'Pro',
@@ -29,7 +26,6 @@ export const PLANS: Record<PlanId, PlanLimits> = {
     dailyAnswers: 300,
     maxFollowUpDepth: 3,
     modelAnswers: true,
-    newsDomains: 5,
   },
 };
 

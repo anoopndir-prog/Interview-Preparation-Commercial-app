@@ -17,10 +17,6 @@ export default function TabLayout() {
         <NativeTabs.Trigger.Label>Scores</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="chart.bar.fill" md="bar_chart" />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="news">
-        <NativeTabs.Trigger.Label>News</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="newspaper.fill" md="newspaper" />
-      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
         <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="person.crop.circle.fill" md="account_circle" />
